@@ -1,0 +1,14 @@
+{
+  "name": "project-skill-autolearn",
+  "displayName": "Project Skill Autolearn",
+  "description": "Preserves verified reusable project-specific strategies as local project skills.",
+  "author": {
+    "name": "Aubei"
+  },
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "memory",
+    "project-knowledge"
+  ]
+}

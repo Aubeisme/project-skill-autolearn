@@ -4,7 +4,25 @@
 
 Install it globally, then use Claude Code normally inside any repository. After non-trivial work, the skill reviews what was learned and, only when it passes a strict gate, writes a project-local skill into that current repository.
 
-## Install from GitHub
+## Install as a Claude Code marketplace
+
+This repository includes Claude Code plugin marketplace metadata.
+
+After publishing this repository to GitHub, install it in Claude Code with:
+
+```text
+/plugin marketplace add YOUR_NAME/project-skill-autolearn
+```
+
+Then install the plugin from that marketplace:
+
+```text
+/plugin install project-skill-autolearn@project-skill-autolearn
+```
+
+Run `/skills` to confirm `project-skill-autolearn` appears.
+
+## Install manually from GitHub
 
 Clone the repository:
 
@@ -60,6 +78,18 @@ git push -u origin main
 
 Create the GitHub repository first at `https://github.com/new`, make it public, and do not add another README there.
 
+The marketplace entry point is:
+
+```text
+.claude-plugin/marketplace.json
+```
+
+The packaged plugin is:
+
+```text
+plugins/project-skill-autolearn/
+```
+
 ## What it creates in each project
 
 By default, reusable project strategies are written to:
@@ -77,7 +107,7 @@ By default, reusable project strategies are written to:
 
 ## Compatibility
 
-The root `skills/project-skill-autolearn/` copy is kept for agents that use a plain `skills/` directory. For Claude Code distribution, prefer `.claude/skills/project-skill-autolearn/`.
+The standalone `.claude/skills/project-skill-autolearn/` and root `skills/project-skill-autolearn/` copies are kept for manual installation and agents that use a plain `skills/` directory. For marketplace installation, Claude Code uses `plugins/project-skill-autolearn/`.
 
 ## License
 

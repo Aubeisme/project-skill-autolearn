@@ -1,0 +1,24 @@
+{
+  "name": "project-skill-autolearn",
+  "owner": {
+    "name": "Aubei"
+  },
+  "description": "A Claude Code marketplace for project skill autolearning.",
+  "plugins": [
+    {
+      "name": "project-skill-autolearn",
+      "source": "./plugins/project-skill-autolearn",
+      "description": "Preserves verified reusable project-specific strategies as local project skills.",
+      "author": {
+        "name": "Aubei"
+      },
+      "license": "MIT",
+      "category": "Productivity",
+      "tags": [
+        "skills",
+        "memory",
+        "project-knowledge"
+      ]
+    }
+  ]
+}
