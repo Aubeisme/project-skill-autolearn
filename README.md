@@ -1,30 +1,128 @@
 # Project Skill Autolearn
 
-`project-skill-autolearn` is a global Claude Code skill for preserving reusable project-specific know-how.
+[English](README.md) | [Chinese](README.zh-CN.md)
 
-Install it globally, then use Claude Code normally inside any repository. After non-trivial work, the skill reviews what was learned and, only when it passes a strict gate, writes a project-local skill into that current repository.
+`project-skill-autolearn` is a global Claude Code skill for turning reusable project workflows into local, indexed, on-demand skills.
 
-When invoked directly, it bootstraps the current project by creating `SkillsDs.md` and `.claude/skills/` if they are missing, then keeps the autolearn responsibility active for the rest of the current conversation.
+Use it when you want project-specific debugging paths, validation routines, recovery steps, or small helper scripts to be durable and shareable without loading them on every request.
+
+## Why
+
+Project work often reveals useful procedures that are too specific to become global skills:
+
+- debugging a flaky subsystem
+- recovering from a known codegen failure
+- validating a risky change type
+- checking where generated files really come from
+- wrapping a repeated manual check as a script
+
+This skill stores those procedures inside the current repository and indexes them with `SkillsDs.md`. Future agents scan the index only when needed, then load one matching `SKILL.md`.
+
+## What it creates
+
+When invoked directly, it bootstraps the current project:
+
+```text
+<project>/
+  .claude/
+    skills/
+  SkillsDs.md
+```
+
+Accepted workflows become local project skills:
+
+```text
+<project>/
+  .claude/
+    skills/
+      <project-skill-name>/
+        SKILL.md
+        scripts/        # optional, only for scripted skills
+  SkillsDs.md
+```
+
+The global skill provides the learning process. The learned workflows stay inside each project.
+
+## What gets saved
+
+A candidate must be project-local, conditional, verified by evidence, reusable beyond the current task, specific and actionable, safe to record, and not already covered by project instructions, `SkillsDs.md`, or an existing skill.
+
+Good candidates:
+
+- a debugging playbook for a project-specific subsystem
+- a validation workflow for a risky change type
+- a codegen recovery workflow tied to this repository
+- a small script that checks a repeated mechanical invariant
+- a corrected assumption future agents are likely to repeat
+
+Bad candidates:
+
+- one-off task results
+- raw logs or stack traces
+- generic engineering advice
+- broad project rules that should live in project instructions
+- secrets, private logs, customer data, or credentials
+
+## Scripted skills
+
+Some skills should include code. If a workflow is stable, repeated, mechanical, and easy to run incorrectly by hand, `project-skill-autolearn` can package it as:
+
+```text
+.claude/skills/<skill-name>/
+  SKILL.md
+  scripts/
+    <script-file>
+```
+
+The script automates the brittle part. `SKILL.md` still explains when to use it, how to run it, what it verifies, and how to interpret results.
+
+## Token model
+
+The skill uses progressive disclosure:
+
+- frontmatter is used for discovery
+- the main `SKILL.md` contains only the core review loop
+- templates and scripted-skill rules live in `references/`
+- references are read only when needed
+
+Current approximate sizes:
+
+| File | Words |
+| --- | ---: |
+| `SKILL.md` | ~640 |
+| `references/project-index-template.md` | ~160 |
+| `references/project-skill-template.md` | ~220 |
+| `references/scripted-skills.md` | ~310 |
+
+Direct invocation loads the main skill. Creating indexes, new skills, or scripted skills loads only the matching reference.
 
 ## Install as a Claude Code marketplace
 
-This repository includes Claude Code plugin marketplace metadata.
-
-After publishing this repository to GitHub, install it in Claude Code with:
+Add the marketplace in Claude Code:
 
 ```text
 /plugin marketplace add YOUR_NAME/project-skill-autolearn
 ```
 
-Then install the plugin from that marketplace:
+Install the plugin:
 
 ```text
 /plugin install project-skill-autolearn@project-skill-autolearn
 ```
 
-Run `/skills` to confirm `project-skill-autolearn` appears.
+Check availability:
 
-## Install manually from GitHub
+```text
+/skills
+```
+
+Marketplace-installed plugin skills are namespaced. Direct invocation usually uses:
+
+```text
+/project-skill-autolearn:project-skill-autolearn
+```
+
+## Manual install
 
 Clone the repository:
 
@@ -32,14 +130,14 @@ Clone the repository:
 git clone https://github.com/YOUR_NAME/project-skill-autolearn.git
 ```
 
-Copy the Claude Code skill into your personal skills directory:
+Copy the standalone skill:
 
 ```bash
 mkdir -p ~/.claude/skills
 cp -R project-skill-autolearn/.claude/skills/project-skill-autolearn ~/.claude/skills/
 ```
 
-On Windows PowerShell:
+Windows PowerShell:
 
 ```powershell
 git clone https://github.com/YOUR_NAME/project-skill-autolearn.git
@@ -47,117 +145,65 @@ New-Item -ItemType Directory -Force "$HOME\.claude\skills" | Out-Null
 Copy-Item -Recurse ".\project-skill-autolearn\.claude\skills\project-skill-autolearn" "$HOME\.claude\skills\project-skill-autolearn"
 ```
 
-Then restart Claude Code or run `/skills` to confirm `project-skill-autolearn` appears.
+Restart Claude Code or run `/skills`.
 
-## Manual install for Claude Code
+## Usage
 
-Copy this folder into your personal Claude Code skills directory:
-
-```text
-.claude/skills/project-skill-autolearn/
-```
-
-to:
+Invoke directly:
 
 ```text
-~/.claude/skills/project-skill-autolearn/
+/project-skill-autolearn:project-skill-autolearn
 ```
 
-Then restart Claude Code or run `/skills` to confirm `project-skill-autolearn` appears.
+Or ask naturally:
 
-## Publish this repository
-
-From this directory:
-
-```bash
-git init
-git add .
-git commit -m "Add project skill autolearn"
-git branch -M main
-git remote add origin https://github.com/YOUR_NAME/project-skill-autolearn.git
-git push -u origin main
+```text
+Use project-skill-autolearn to review this session and preserve any reusable conditional workflow.
 ```
 
-Create the GitHub repository first at `https://github.com/new`, make it public, and do not add another README there.
+After direct invocation, it should stay active for the current conversation and review non-trivial work before final responses.
 
-The marketplace entry point is:
+## Repository layout
 
 ```text
 .claude-plugin/marketplace.json
-```
-
-The packaged plugin is:
-
-```text
 plugins/project-skill-autolearn/
-```
-
-## What it creates in each project
-
-On direct invocation, the project gets the lightweight storage structure:
-
-```text
-<project>/
-  .claude/
-    skills/
-  SkillsDs.md
-```
-
-Reusable project strategies are then written to:
-
-```text
-<project>/
-  .claude/
-    skills/
-      <project-skill-name>/
-        SKILL.md
-  SkillsDs.md
-```
-
-`SkillsDs.md` is the lightweight index. Future agents should scan it only when blocked and load only the one matching project skill.
-
-## Compatibility
-
-The standalone `.claude/skills/project-skill-autolearn/` and root `skills/project-skill-autolearn/` copies are kept for manual installation and agents that use a plain `skills/` directory. For marketplace installation, Claude Code uses `plugins/project-skill-autolearn/`.
-
-## 中文说明
-
-`project-skill-autolearn` 是一个全局 Claude Code Skill，用来在每轮非平凡任务结束时，总结当前项目中可复用、已验证、项目专用的策略，并把它们沉淀到当前项目本地，而不是写回这个全局 Skill 仓库。
-
-直接运行 `/project-skill-autolearn` 时，它会先初始化当前项目：
-
-```text
-<project>/
-  .claude/
-    skills/
-  SkillsDs.md
-```
-
-之后如果某条经验通过门槛判断，它会创建项目本地 Skill：
-
-```text
-<project>/
-  .claude/
-    skills/
-      <project-skill-name>/
-        SKILL.md
-  SkillsDs.md
-```
-
-安装为 Claude Code marketplace：
-
-```text
-/plugin marketplace add YOUR_NAME/project-skill-autolearn
-/plugin install project-skill-autolearn@project-skill-autolearn
-```
-
-手动安装时，把下面目录复制到 `~/.claude/skills/project-skill-autolearn/`：
-
-```text
+  .claude-plugin/plugin.json
+  skills/project-skill-autolearn/
+    SKILL.md
+    references/
 .claude/skills/project-skill-autolearn/
+  SKILL.md
+  references/
+skills/project-skill-autolearn/
+  SKILL.md
+  references/
 ```
 
-安装后重启 Claude Code，或者运行 `/skills` 确认 `project-skill-autolearn` 已出现。
+- `plugins/project-skill-autolearn/` is used by marketplace installation.
+- `.claude/skills/project-skill-autolearn/` is the standalone manual-install copy.
+- `skills/project-skill-autolearn/` is kept for compatibility with agents that use a plain `skills/` directory.
+
+Keep all three skill directories in sync when editing.
+
+## Validation
+
+Validate the marketplace structure:
+
+```text
+/plugin validate .
+```
+
+Or from a shell with Claude Code available:
+
+```bash
+claude plugin validate .
+```
+
+## References
+
+- [Claude Code plugin marketplaces](https://docs.claude.com/en/docs/claude-code/plugin-marketplaces)
+- [Claude Code skills](https://docs.claude.com/en/docs/claude-code/skills)
 
 ## License
 
