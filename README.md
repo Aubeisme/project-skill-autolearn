@@ -4,6 +4,8 @@
 
 Install it globally, then use Claude Code normally inside any repository. After non-trivial work, the skill reviews what was learned and, only when it passes a strict gate, writes a project-local skill into that current repository.
 
+When invoked directly, it bootstraps the current project by creating `SkillsDs.md` and `.claude/skills/` if they are missing, then keeps the autolearn responsibility active for the rest of the current conversation.
+
 ## Install as a Claude Code marketplace
 
 This repository includes Claude Code plugin marketplace metadata.
@@ -92,7 +94,16 @@ plugins/project-skill-autolearn/
 
 ## What it creates in each project
 
-By default, reusable project strategies are written to:
+On direct invocation, the project gets the lightweight storage structure:
+
+```text
+<project>/
+  .claude/
+    skills/
+  SkillsDs.md
+```
+
+Reusable project strategies are then written to:
 
 ```text
 <project>/

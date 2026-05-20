@@ -1,6 +1,6 @@
 ---
 name: project-skill-autolearn
-description: Use when completing a non-trivial task in any repository and deciding whether to preserve verified reusable project-specific strategies, commands, conventions, debugging paths, or validation steps as local project skills.
+description: Use when invoked directly or when completing a non-trivial task in any repository to bootstrap project skill storage and preserve verified reusable project-specific strategies, commands, conventions, debugging paths, or validation steps as local project skills.
 ---
 
 # Project Skill Autolearn
@@ -10,6 +10,8 @@ description: Use when completing a non-trivial task in any repository and decidi
 This is a global personal skill that writes local project memory.
 
 Use it in any repository after non-trivial work. If the task reveals reusable, verified, project-specific know-how, preserve it inside that current project, not inside this global skill.
+
+When this skill is invoked directly by name or slash command, activate it for the rest of the current conversation. From that point until the conversation ends, run its end-of-task review before every final response for non-trivial work.
 
 Default target layout for Claude Code projects:
 
@@ -26,10 +28,21 @@ If a repository already has a local convention such as `skills/`, use the existi
 
 ## When to run
 
+- Immediately when invoked directly by name or slash command.
 - Before the final response for every non-trivial task.
 - After a repeated mistake, corrected assumption, hidden setup step, or non-obvious fix.
 - When a command, debugging route, validation step, generated-file rule, or architecture boundary becomes reusable.
 - When an existing project-local skill is stale, duplicated, or missing a trigger.
+
+## Direct invocation bootstrap
+
+When invoked directly, first bootstrap the current project before evaluating candidates:
+
+1. Check for `SkillsDs.md`; if missing, create it with the minimum project index template below.
+2. Check for `.claude/skills/`; if missing, create the directory.
+3. Do not create a project skill file unless a candidate later passes the gate.
+4. After bootstrapping, capture candidates from the current session and run the closed-loop workflow.
+5. Treat this skill as active for the rest of the conversation, so later non-trivial work also gets reviewed before final response.
 
 ## Closed-loop workflow
 
