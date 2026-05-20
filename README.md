@@ -120,6 +120,45 @@ Reusable project strategies are then written to:
 
 The standalone `.claude/skills/project-skill-autolearn/` and root `skills/project-skill-autolearn/` copies are kept for manual installation and agents that use a plain `skills/` directory. For marketplace installation, Claude Code uses `plugins/project-skill-autolearn/`.
 
+## 中文说明
+
+`project-skill-autolearn` 是一个全局 Claude Code Skill，用来在每轮非平凡任务结束时，总结当前项目中可复用、已验证、项目专用的策略，并把它们沉淀到当前项目本地，而不是写回这个全局 Skill 仓库。
+
+直接运行 `/project-skill-autolearn` 时，它会先初始化当前项目：
+
+```text
+<project>/
+  .claude/
+    skills/
+  SkillsDs.md
+```
+
+之后如果某条经验通过门槛判断，它会创建项目本地 Skill：
+
+```text
+<project>/
+  .claude/
+    skills/
+      <project-skill-name>/
+        SKILL.md
+  SkillsDs.md
+```
+
+安装为 Claude Code marketplace：
+
+```text
+/plugin marketplace add YOUR_NAME/project-skill-autolearn
+/plugin install project-skill-autolearn@project-skill-autolearn
+```
+
+手动安装时，把下面目录复制到 `~/.claude/skills/project-skill-autolearn/`：
+
+```text
+.claude/skills/project-skill-autolearn/
+```
+
+安装后重启 Claude Code，或者运行 `/skills` 确认 `project-skill-autolearn` 已出现。
+
 ## License
 
 MIT
